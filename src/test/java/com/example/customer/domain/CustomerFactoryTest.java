@@ -1,6 +1,7 @@
 package com.example.customer.domain;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDate;
@@ -32,6 +33,12 @@ class CustomerFactoryTest {
         assertEquals(LocalDate.of(1990, 5, 10), customer.dateOfBirth());
         assertEquals(document, customer.document());
         assertEquals(address, customer.address());
+        assertEquals("Rua das Flores", customer.address().street());
+        assertEquals("100", customer.address().number());
+        assertEquals("Apto 12", customer.address().complement());
+        assertEquals("Centro", customer.address().neighborhood());
+        assertEquals("Sao Paulo", customer.address().city());
+        assertEquals("SP", customer.address().state());
     }
 
     @Test
@@ -46,6 +53,13 @@ class CustomerFactoryTest {
 
         assertEquals(DocumentType.CNPJ, customer.document().type());
         assertEquals("11222333000181", customer.document().value());
+    }
+
+    @Test
+    void allowsAddressWithoutComplement() {
+        final Address address = validAddress();
+
+        assertNull(address.complement());
     }
 
     @Test
@@ -73,6 +87,13 @@ class CustomerFactoryTest {
         assertThrows(IllegalArgumentException.class, () -> CustomerFactory.create(
                 " ",
                 "CUST-005",
+                LocalDate.of(1990, 5, 10),
+                Document.cpf("52998224725"),
+                validAddress()
+        ));
+        assertThrows(IllegalArgumentException.class, () -> CustomerFactory.create(
+                "Maria Silva",
+                " ",
                 LocalDate.of(1990, 5, 10),
                 Document.cpf("52998224725"),
                 validAddress()
@@ -117,6 +138,30 @@ class CustomerFactoryTest {
                 "Centro",
                 "Sao Paulo",
                 "SP"
+        ));
+        assertThrows(IllegalArgumentException.class, () -> new Address(
+                "Rua das Flores",
+                "100",
+                null,
+                " ",
+                "Sao Paulo",
+                "SP"
+        ));
+        assertThrows(IllegalArgumentException.class, () -> new Address(
+                "Rua das Flores",
+                "100",
+                null,
+                "Centro",
+                " ",
+                "SP"
+        ));
+        assertThrows(IllegalArgumentException.class, () -> new Address(
+                "Rua das Flores",
+                "100",
+                null,
+                "Centro",
+                "Sao Paulo",
+                " "
         ));
     }
 

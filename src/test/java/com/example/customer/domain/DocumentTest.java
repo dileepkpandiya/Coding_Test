@@ -35,4 +35,10 @@ class DocumentTest {
         assertThrows(IllegalArgumentException.class, () -> Document.cnpj("11.111.111/1111-11"));
         assertThrows(IllegalArgumentException.class, () -> Document.cnpj("123"));
     }
+
+    @Test
+    void rejectsMissingDocumentFields() {
+        assertThrows(NullPointerException.class, () -> new Document(null, "52998224725"));
+        assertThrows(NullPointerException.class, () -> Document.cpf(null));
+    }
 }
